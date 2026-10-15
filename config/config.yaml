@@ -34,3 +34,4 @@ model:
 mlflow:
   experiment_name: "morocco-car-price"
   tracking_uri: "sqlite:///mlruns.db"
+

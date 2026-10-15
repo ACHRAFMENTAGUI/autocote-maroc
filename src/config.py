@@ -41,3 +41,4 @@ def load_config(config_path: str = "config/config.yaml") -> AppConfig:
     return AppConfig(**config_dict)
 
 config = load_config()
+

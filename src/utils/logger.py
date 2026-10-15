@@ -14,3 +14,4 @@ def get_logger(name: str = "PFM", level: int = logging.INFO) -> logging.Logger:
         handler.setFormatter(formatter)
         logger.addHandler(handler)
     return logger
+

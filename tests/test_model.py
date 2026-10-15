@@ -33,3 +33,4 @@ def test_unseen_categories_handling(sample_car_input):
 
     assert isinstance(pred_price, float)
     assert pred_price > 0.0
+

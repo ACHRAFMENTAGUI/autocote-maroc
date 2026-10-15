@@ -69,3 +69,4 @@ def build_feature_pipeline() -> ColumnTransformer:
         remainder="drop"
     )
     return preprocessor
+

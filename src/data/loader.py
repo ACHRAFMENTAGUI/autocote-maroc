@@ -36,3 +36,4 @@ def split_data(
         X, y, test_size=t_size, random_state=seed
     )
     return X_train, X_test, y_train, y_test
+

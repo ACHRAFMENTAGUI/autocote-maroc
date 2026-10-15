@@ -23,3 +23,4 @@ def test_clean_input_transformer_numeric_and_text():
     assert transformed["marke"].iloc[0] == "Renault"
     assert transformed["city"].iloc[0] == "Casablanca"
     assert transformed["type_carburant"].iloc[0] == "Diesel"
+

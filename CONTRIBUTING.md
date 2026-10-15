@@ -42,3 +42,4 @@ ruff check .
 # Exécution des tests unitaires
 pytest tests/ -v
 ```
+

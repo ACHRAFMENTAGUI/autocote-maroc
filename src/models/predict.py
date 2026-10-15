@@ -55,3 +55,4 @@ class CarPricePredictor:
         pred = self.model.predict(df_processed)[0]
         # Prices cannot be negative
         return max(0.0, float(pred))
+

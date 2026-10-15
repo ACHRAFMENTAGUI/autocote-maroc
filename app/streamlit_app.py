@@ -1,5 +1,13 @@
+import sys
+from pathlib import Path
 from datetime import datetime
 import streamlit as st
+
+# Assurer que la racine du projet est dans sys.path pour importer 'src'
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.models.predict import CarPricePredictor
 
 st.set_page_config(
@@ -187,6 +195,7 @@ if submitted and predictor is not None:
 # Copyright
 st.markdown("""
 <div class="copyright">
-    © 2024 Tous droits réservés - Conçu par Achraf Mentagui & Rihab El Marikh
+    © 2024 Tous droits réservés - Conçu par Achraf Mentagui
 </div>
 """, unsafe_allow_html=True)
+
