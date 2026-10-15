@@ -1,0 +1,49 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Caches and environments
+.env
+.venv/
+env/
+venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Datasets (Keep data out of git history unless via DVC or Git LFS)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+DATA/raw/*
+DATA/processed/*
+!DATA/raw/.gitkeep
+!DATA/processed/.gitkeep
+*.csv
+*.json
+
+# Machine Learning models
+models/*
+!models/.gitkeep
+*.pkl
+*.joblib
+*.onnx
+
+# MLflow / Wandb runs
+mlruns/
+.mlflow/
+wandb/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

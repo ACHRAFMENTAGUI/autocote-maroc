@@ -1,0 +1,36 @@
+data:
+  raw_path: "data/raw/AvitoData.csv"
+  processed_path: "data/processed/clean_data.csv"
+  target_column: "price"
+  test_size: 0.2
+  val_size: 0.2
+  random_state: 42
+
+features:
+  numeric:
+    - "year"
+    - "kilometrage"
+    - "puissance"
+    - "Nombre_doors"
+  categorical:
+    - "type_boit"
+    - "type_carburant"
+    - "marke"
+    - "model"
+    - "premiere_main"
+    - "city"
+
+model:
+  name: "lightgbm"
+  params:
+    objective: "regression"
+    num_leaves: 31
+    learning_rate: 0.05
+    n_estimators: 1000
+    random_state: 42
+    n_jobs: -1
+  artifact_path: "models/lightgbm_model.pkl"
+
+mlflow:
+  experiment_name: "morocco-car-price"
+  tracking_uri: "sqlite:///mlruns.db"
