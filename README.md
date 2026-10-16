@@ -93,7 +93,7 @@ L'interface s'ouvre alors sur `http://localhost:8501`.
 Pour ré-entraîner le modèle et enregistrer les métriques dans l'interface MLflow :
 
 ```bash
-python -m src.models.train
+python -m src.models.train  
 mlflow ui
 ```
 Puis ouvrez `http://localhost:5000` pour visualiser les métriques ($R^2$, MAE, RMSE) et les artefacts.

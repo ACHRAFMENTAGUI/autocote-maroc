@@ -39,3 +39,4 @@ def test_app_submit_prediction():
     if calc_btn:
         calc_btn.click().run(timeout=30)
         assert not at.exception, f"Erreur lors de l'exécution du calcul : {at.exception}"
+
