@@ -1,4 +1,4 @@
-# 🚗 Moroccan Used Car Price Estimator (Avito.ma)
+# 🚗 Moroccan Used Car Price Estimator (marche-auto-maroc)
 
 [![CI/CD Pipeline](https://github.com/username/morocco-car-price/actions/workflows/ci.yml/badge.svg)](https://github.com/username/morocco-car-price/actions)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io)
 
-Un pipeline complet de Machine Learning et MLOps pour estimer la valeur vénale d'un véhicule d'occasion au Maroc, entraîné sur plus de 29 000 annonces scrapées sur **Avito.ma**.
+Un pipeline complet de Machine Learning et MLOps pour estimer la valeur vénale d'un véhicule d'occasion au Maroc, entraîné sur plus de 29 000 annonces scrapées sur **marche-auto-maroc**.
 
 ---
 
@@ -37,7 +37,7 @@ PFM/
 ├── .github/workflows/ci.yml      # Intégration continue GitHub Actions
 ├── config/config.yaml            # Hyperparamètres et configurations centralisées
 ├── data/
-│   ├── raw/                      # Données brutes scrapées (AvitoData.csv)
+│   ├── raw/                      # Données brutes scrapées (market_data_raw.csv)
 │   └── processed/                # Données nettoyées (clean_data.csv)
 ├── models/                       # Modèles sérialisés (.pkl)
 ├── notebooks/                    # Notebooks ordonnés (01_scraping à 05_lightgbm)

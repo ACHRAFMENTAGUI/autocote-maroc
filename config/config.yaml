@@ -1,5 +1,5 @@
 data:
-  raw_path: "data/raw/AvitoData.csv"
+  raw_path: "data/raw/market_data_raw.csv"
   processed_path: "data/processed/clean_data.csv"
   target_column: "price"
   test_size: 0.2

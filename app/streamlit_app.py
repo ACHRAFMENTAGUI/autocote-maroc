@@ -23,9 +23,16 @@ TAUX_EUR_MAD = float(os.getenv("TAUX_EUR_MAD", "10.85"))
 CURRENT_YEAR = datetime.now().year
 
 # ---------------------------------------------------------
+# ✅ FIX #1 : Helper pour rendre le HTML proprement
+# ---------------------------------------------------------
+def render_html(html: str):
+    """Nettoie (dedent + strip) et affiche du HTML dans Streamlit."""
+    st.markdown(textwrap.dedent(html).strip(), unsafe_allow_html=True)
+
+# ---------------------------------------------------------
 # 1. CSS CUSTOM COMPLET (FINTECH : BLEU NUIT, ÉMERAUDE, ARDOISE)
 # ---------------------------------------------------------
-FINTECH_CSS = textwrap.dedent("""
+FINTECH_CSS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -264,7 +271,7 @@ FINTECH_CSS = textwrap.dedent("""
         box-shadow: 0 6px 20px -4px rgba(16, 185, 129, 0.2);
     }
 </style>
-""")
+"""
 st.markdown(FINTECH_CSS, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
@@ -352,7 +359,7 @@ def valider_inputs(payload: dict) -> tuple[bool, list[str]]:
     return True, warnings
 
 # ---------------------------------------------------------
-# RENDU DU RÉSULTAT CORRIGÉ & TOOLTIP
+# ✅ FIX #2 : RENDU DU RÉSULTAT (dedent + strip)
 # ---------------------------------------------------------
 def afficher_resultat(valeur_mad, fourchette_basse, fourchette_haute, confiance="Élevé (84% R²)"):
     valeur_mad = max(10000.0, float(valeur_mad))
@@ -360,37 +367,37 @@ def afficher_resultat(valeur_mad, fourchette_basse, fourchette_haute, confiance=
     fourchette_haute = max(valeur_mad, float(fourchette_haute))
     eur_approx = round(valeur_mad / TAUX_EUR_MAD)
 
-    html_content = textwrap.dedent(f"""
-    <div class="result-card">
-        <div class="result-badge">Valeur Vénale Marché Estimée</div>
-        <div class="result-price-mad">{valeur_mad:,.0f} MAD</div>
-        <div class="result-price-eur">≈ {eur_approx:,.0f} € (Taux : 1 € = {TAUX_EUR_MAD:.2f} MAD)</div>
-
-        <div class="range-container">
-            <div class="range-col">
-                <div class="range-label">Fourchette Basse</div>
-                <div class="range-value">{fourchette_basse:,.0f} MAD</div>
-            </div>
-            <div class="range-divider"></div>
-            <div class="range-col">
-                <div class="range-label">Fourchette Haute</div>
-                <div class="range-value">{fourchette_haute:,.0f} MAD</div>
-            </div>
-        </div>
-    </div>
-    """)
+    # ✅ Construction du HTML sur une seule chaîne sans indentation parasite
+    html_content = (
+        '<div class="result-card">'
+        '<div class="result-badge">Valeur Vénale Marché Estimée</div>'
+        f'<div class="result-price-mad">{valeur_mad:,.0f} MAD</div>'
+        f'<div class="result-price-eur">≈ {eur_approx:,.0f} € (Taux : 1 € = {TAUX_EUR_MAD:.2f} MAD)</div>'
+        '<div class="range-container">'
+        '<div class="range-col">'
+        '<div class="range-label">Fourchette Basse</div>'
+        f'<div class="range-value">{fourchette_basse:,.0f} MAD</div>'
+        '</div>'
+        '<div class="range-divider"></div>'
+        '<div class="range-col">'
+        '<div class="range-label">Fourchette Haute</div>'
+        f'<div class="range-value">{fourchette_haute:,.0f} MAD</div>'
+        '</div>'
+        '</div>'
+        '</div>'
+    )
     st.markdown(html_content, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # HERO BANNER
 # ---------------------------------------------------------
-st.markdown("""
+render_html("""
 <div class="hero-container">
     <div class="hero-badge">⚡ Argus Automobile & IA Maroc 2026</div>
     <h1 class="hero-title">Estimez la valeur réelle de votre <span>Voiture d'Occasion</span></h1>
-    <p class="hero-subtitle">Algorithme LightGBM entraîné sur +29 000 transactions réelles au Maroc (Avito).</p>
+    <p class="hero-subtitle">Algorithme LightGBM entraîné sur +29 000 transactions réelles au Maroc (Marché Auto Maroc).</p>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 if is_mock_mode:
     st.info("ℹ️ Mode Démonstration actif. Le modèle de production se charge depuis `models/lightgbm_model.pkl`.")
@@ -438,7 +445,9 @@ with tab_estimation:
     col_form, col_panel = st.columns([1.15, 0.85], gap="large")
 
     with col_form:
-        st.markdown('<div class="custom-card"><div class="card-header">🏷️ Identité & Localisation</div>', unsafe_allow_html=True)
+        # ✅ FIX #3 : Utilisation du helper render_html
+        render_html('<div class="custom-card"><div class="card-header">🏷️ Identité & Localisation</div></div>')
+
         c1, c2 = st.columns(2)
         with c1:
             cur_brand = st.session_state.form_data.get("marke", "Dacia")
@@ -461,9 +470,9 @@ with tab_estimation:
             cur_city = st.session_state.form_data.get("city", "Casablanca")
             selected_city = st.selectbox("Ville", MOROCCAN_CITIES, index=MOROCCAN_CITIES.index(cur_city) if cur_city in MOROCCAN_CITIES else 0, key="s_city")
             city_final = st.text_input("Préciser ville", "Casablanca", key="t_city") if selected_city == "Autre..." else selected_city
-        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown('<div class="custom-card"><div class="card-header">⚙️ Motorisation & Kilométrage</div>', unsafe_allow_html=True)
+        render_html('<div class="custom-card"><div class="card-header">⚙️ Motorisation & Kilométrage</div></div>')
+
         f1, f2 = st.columns(2)
         with f1:
             fuels = ["Diesel", "Essence", "Hybride", "Electrique"]
@@ -486,7 +495,6 @@ with tab_estimation:
 
         cur_km_val = int(st.session_state.form_data.get("kilometrage", 110000))
         selected_km = st.slider("Kilométrage total (km)", 0, 350000, min(max(cur_km_val, 0), 350000), 5000, format="%d km", key="sl_km")
-        st.markdown("</div>", unsafe_allow_html=True)
 
         submit_trigger = st.button("✨ Calculer l'Estimation Immédiate", key="btn_calc", use_container_width=True)
 
@@ -513,8 +521,7 @@ with tab_estimation:
             prix_estime = 0.0
         else:
             for warn in validation_warnings: st.warning(warn)
-            
-            # Skeleton loader & spinner pendant l'inférence
+
             with st.spinner("Analyse du marché et prédiction LightGBM..."):
                 try:
                     prix_estime = model_predictor.predict(payload)
@@ -533,39 +540,41 @@ with tab_estimation:
             st.markdown("""
             **Pourquoi un R² de 84% ?**
             - **R² (Coefficient de détermination)** : Indique que **84% des variations de prix** observées sur le marché marocain sont fidèlement expliquées par les caractéristiques du véhicule (marque, modèle, âge, carburant, kilométrage).
-            - **Fiabilité Élevée** : Le modèle s'appuie sur une base de **29 342 annonces réelles** d'Avito.ma, assurant une robustesse face aux variations régionales.
+            - **Fiabilité Élevée** : Le modèle s'appuie sur une base de **29 342 annonces réelles** d'marche-auto-maroc, assurant une robustesse face aux variations régionales.
             """)
 
         # Fiche synthétique
-        st.markdown('<div class="custom-card"><div class="card-header">📋 Fiche Synthétique du Véhicule</div>', unsafe_allow_html=True)
-        chips_html = textwrap.dedent(f"""
-            <div style="margin-bottom: 0.8rem;">
-                <span class="spec-badge">🚘 {brand_final} {model_final}</span>
-                <span class="spec-badge">📅 Année {selected_year} ({age_vehicule} ans)</span>
-                <span class="spec-badge">📍 {city_final}</span>
-                <span class="spec-badge">⛽ {selected_fuel}</span>
-                <span class="spec-badge">🕹️ {selected_gear}</span>
-                <span class="spec-badge">⚡ {selected_power} CV</span>
-                <span class="spec-badge">🛣️ {selected_km:,.0f} km</span>
-                <span class="spec-badge">⭐ {'1ère main' if selected_first == 'Oui' else '2ème main +'}</span>
-            </div>
-        """)
+        render_html('<div class="custom-card"><div class="card-header">📋 Fiche Synthétique du Véhicule</div></div>')
+
+        # ✅ FIX #4 : HTML en une seule chaîne (pas de décalage d'indentation)
+        chips_html = (
+            '<div style="margin-bottom: 0.8rem;">'
+            f'<span class="spec-badge">🚘 {brand_final} {model_final}</span>'
+            f'<span class="spec-badge">📅 Année {selected_year} ({age_vehicule} ans)</span>'
+            f'<span class="spec-badge">📍 {city_final}</span>'
+            f'<span class="spec-badge">⛽ {selected_fuel}</span>'
+            f'<span class="spec-badge">🕹️ {selected_gear}</span>'
+            f'<span class="spec-badge">⚡ {selected_power} CV</span>'
+            f'<span class="spec-badge">🛣️ {selected_km:,.0f} km</span>'
+            f"<span class=\"spec-badge\">⭐ {'1ère main' if selected_first == 'Oui' else '2ème main +'}</span>"
+            '</div>'
+        )
         st.markdown(chips_html, unsafe_allow_html=True)
 
         km_tag = "Faible roulage (Atout revente)" if km_annuel < 12000 else ("Standard marocain" if km_annuel <= 20000 else "Roulage intensif")
         km_color = "#10B981" if km_annuel < 12000 else ("#3B82F6" if km_annuel <= 20000 else "#F59E0B")
 
-        usage_html = textwrap.dedent(f"""
-            <div style="padding: 0.85rem; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0; margin-top: 0.6rem;">
-                <div style="font-size: 0.72rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Intensité d'utilisation annuelle</div>
-                <div style="font-size: 1.05rem; font-weight: 700; color: {km_color}; margin: 0.2rem 0;">{km_annuel:,.0f} km / an • {km_tag}</div>
-                <div style="font-size: 0.78rem; color: #94A3B8;">Moyenne calculée sur {selected_km:,.0f} km en {age_vehicule} an(s).</div>
-            </div>
-        </div>
-        """)
+        # ✅ FIX #5 : Balises correctement fermées (suppression du </div> orphelin)
+        usage_html = (
+            '<div style="padding: 0.85rem; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0; margin-top: 0.6rem;">'
+            '<div style="font-size: 0.72rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Intensité d\'utilisation annuelle</div>'
+            f'<div style="font-size: 1.05rem; font-weight: 700; color: {km_color}; margin: 0.2rem 0;">{km_annuel:,.0f} km / an • {km_tag}</div>'
+            f'<div style="font-size: 0.78rem; color: #94A3B8;">Moyenne calculée sur {selected_km:,.0f} km en {age_vehicule} an(s).</div>'
+            '</div>'
+        )
         st.markdown(usage_html, unsafe_allow_html=True)
 
-        # 5. Bouton "Copier le résultat" (avec st.code natif pour 1-clic direct)
+        # 5. Bouton "Copier le résultat"
         st.markdown("##### 📋 Exporter ou Copier le Résultat :")
         rapport_export = f"""[AutoCote Maroc 2026]
 Véhicule : {brand_final} {model_final} ({selected_year})
@@ -576,7 +585,7 @@ Ville : {city_final}
 VALEUR ESTIMÉE : {prix_estime:,.0f} MAD (≈ {round(prix_estime/TAUX_EUR_MAD):,.0f} €)
 Fourchette marché : {prix_plancher:,.0f} - {prix_plafond:,.0f} MAD
 Indice de confiance : 84% (Modèle LightGBM)"""
-        
+
         st.code(rapport_export, language="markdown")
 
 # =========================================================
@@ -590,7 +599,7 @@ with tab_comparateur:
 
     # Véhicule A
     with col_v1:
-        st.markdown('<div class="compare-card"><h4>🚗 Véhicule A</h4>', unsafe_allow_html=True)
+        render_html('<div class="compare-card"><h4>🚗 Véhicule A</h4></div>')
         v1_brand = st.selectbox("Marque A", brand_options, index=brand_options.index("Dacia") if "Dacia" in brand_options else 0, key="v1_b")
         v1_models = catalog_dict.get(v1_brand, ["Autre..."])
         v1_model = st.selectbox("Modèle A", v1_models, index=0, key="v1_m")
@@ -600,11 +609,10 @@ with tab_comparateur:
         v1_gear = st.selectbox("Boîte A", ["Manuelle", "Automatique"], index=0, key="v1_g")
         v1_power = st.number_input("CV A", 3, 25, 6, key="v1_p")
         v1_city = st.selectbox("Ville A", MOROCCAN_CITIES, index=0, key="v1_c")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     # Véhicule B
     with col_v2:
-        st.markdown('<div class="compare-card"><h4>🚙 Véhicule B</h4>', unsafe_allow_html=True)
+        render_html('<div class="compare-card"><h4>🚙 Véhicule B</h4></div>')
         v2_brand = st.selectbox("Marque B", brand_options, index=brand_options.index("Renault") if "Renault" in brand_options else 1, key="v2_b")
         v2_models = catalog_dict.get(v2_brand, ["Autre..."])
         v2_model = st.selectbox("Modèle B", v2_models, index=0, key="v2_m")
@@ -614,7 +622,6 @@ with tab_comparateur:
         v2_gear = st.selectbox("Boîte B", ["Manuelle", "Automatique"], index=0, key="v2_g")
         v2_power = st.number_input("CV B", 3, 25, 6, key="v2_p")
         v2_city = st.selectbox("Ville B", MOROCCAN_CITIES, index=1, key="v2_c")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     # Calculs de comparaison
     p1_data = {"year": int(v1_year), "marke": v1_brand, "model": v1_model, "type_boit": v1_gear, "type_carburant": v1_fuel, "puissance": float(v1_power), "kilometrage": float(v1_km), "premiere_main": "Oui", "Nombre_doors": 5.0, "city": v1_city}
@@ -631,11 +638,10 @@ with tab_comparateur:
     r_col1, r_col2, r_col3 = st.columns(3)
     r_col1.metric(f"Prix {v1_brand} {v1_model}", f"{pred_a:,.0f} MAD", delta=f"{v1_year}")
     r_col2.metric(f"Prix {v2_brand} {v2_model}", f"{pred_b:,.0f} MAD", delta=f"{delta_price:+,.0f} MAD ({pct_diff:+.1f}%)", delta_color="inverse")
-    
+
     economique = f"{v1_brand} {v1_model}" if pred_a < pred_b else f"{v2_brand} {v2_model}"
     r_col3.metric("Option la plus accessible", economique, delta=f"Économie : {abs(delta_price):,.0f} MAD")
 
-    # Tableau comparatif
     st.dataframe([
         {"Critère": "Cote Estimée (MAD)", "Véhicule A": f"{pred_a:,.0f} MAD", "Véhicule B": f"{pred_b:,.0f} MAD", "Écart": f"{abs(delta_price):,.0f} MAD"},
         {"Critère": "Âge", "Véhicule A": f"{CURRENT_YEAR - v1_year} ans", "Véhicule B": f"{CURRENT_YEAR - v2_year} ans", "Écart": f"{abs(v1_year - v2_year)} an(s)"},
@@ -646,9 +652,9 @@ with tab_comparateur:
 # ---------------------------------------------------------
 # FOOTER
 # ---------------------------------------------------------
-st.markdown("""
+render_html("""
 <div style="text-align: center; padding: 2rem 0 1rem 0; color: #94A3B8; font-size: 0.85rem;">
     🚗 <strong>AutoCote Maroc</strong> • Développé par <strong>Achraf Mentagui</strong><br>
-    Modèle de Machine Learning entraîné sur les données d'Avito.ma • Conforme MLOps
+    Modèle de Machine Learning entraîné sur les données d'marche-auto-maroc • Conforme MLOps
 </div>
-""", unsafe_allow_html=True)
+""")

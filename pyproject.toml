@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "morocco-car-price"
 version = "1.0.0"
-description = "Machine Learning pipeline for predicting used car prices in Morocco (Avito)"
+description = "Machine Learning pipeline for predicting used car prices in Morocco (Marché Auto Maroc)"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
