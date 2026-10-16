@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 import streamlit as st
 
-# 1. Résolution du chemin racine du projet pour imports 'src'
+# 1. Résolution dynamique du projet root pour imports 'src'
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -19,77 +19,87 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Constantes de l'application (configurables via variables d'environnement)
 TAUX_EUR_MAD = float(os.getenv("TAUX_EUR_MAD", "10.85"))
 CURRENT_YEAR = datetime.now().year
 
 # ---------------------------------------------------------
-# STYLES CSS PERSONNALISÉS (DESIGN SYSTEM FINTECH HAUT DE GAMME)
+# 1. CSS CUSTOM COMPLET (FINTECH : BLEU NUIT, ÉMERAUDE, ARDOISE)
 # ---------------------------------------------------------
-CSS_STYLES = textwrap.dedent("""
+FINTECH_CSS = textwrap.dedent("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    :root {
+        --color-dark: #0F172A;
+        --color-dark-surface: #1E293B;
+        --color-emerald: #10B981;
+        --color-emerald-light: #34D399;
+        --color-slate: #94A3B8;
+        --color-slate-light: #F1F5F9;
+        --color-border: #E2E8F0;
+        --color-bg: #F8FAFC;
+    }
 
     * {
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    /* Container global */
     .stApp {
-        background-color: #F8FAFC;
+        background-color: var(--color-bg);
     }
 
     /* En-tête Hero */
     .hero-container {
         text-align: center;
-        padding: 1.8rem 1rem 1.4rem 1rem;
-        margin-bottom: 1rem;
+        padding: 1.8rem 1rem 1.2rem 1rem;
+        margin-bottom: 0.8rem;
     }
 
     .hero-badge {
-        display: inline-block;
-        background: #EEF2FF;
-        color: #4F46E5;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #0F172A;
+        color: #34D399;
         font-weight: 700;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         padding: 0.35rem 0.9rem;
         border-radius: 9999px;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        border: 1px solid #C7D2FE;
+        border: 1px solid rgba(52, 211, 153, 0.3);
         margin-bottom: 0.6rem;
     }
 
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2.4rem;
         font-weight: 800;
-        letter-spacing: -0.02em;
         color: #0F172A;
         line-height: 1.2;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.3rem;
     }
 
     .hero-title span {
-        background: linear-gradient(135deg, #4F46E5 0%, #0EA5E9 100%);
+        background: linear-gradient(135deg, #0F172A 0%, #10B981 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
     .hero-subtitle {
-        font-size: 1rem;
+        font-size: 0.98rem;
         color: #64748B;
-        max-width: 600px;
+        max-width: 620px;
         margin: 0 auto;
         font-weight: 500;
     }
 
-    /* Carte formulaire */
+    /* Cartes formulaire et sections */
     .custom-card {
         background: #FFFFFF;
-        border: 1px solid #E2E8F0;
+        border: 1px solid var(--color-border);
         border-radius: 16px;
-        padding: 1.4rem;
-        box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+        padding: 1.3rem;
+        box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
         margin-bottom: 1.2rem;
     }
 
@@ -97,28 +107,76 @@ CSS_STYLES = textwrap.dedent("""
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 700;
-        color: #1E293B;
+        color: var(--color-dark);
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 1px solid #F1F5F9;
+        border-bottom: 1px solid var(--color-slate-light);
     }
 
-    /* Carte de résultat Fintech */
+    /* Modernisation des champs Selectbox et Slider */
+    div[data-baseweb="select"] > div {
+        border-radius: 10px !important;
+        border: 1px solid #CBD5E1 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    div[data-baseweb="select"] > div:hover {
+        border-color: #34D399 !important;
+    }
+
+    div[data-baseweb="select"] > div:focus-within {
+        border-color: #10B981 !important;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    }
+
+    /* Slider styling */
+    div[data-testid="stSlider"] > div > div > div > div {
+        background-color: #10B981 !important;
+    }
+
+    /* Modernisation des Boutons */
+    .stButton>button {
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%) !important;
+        color: #FFFFFF !important;
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+        border-radius: 12px !important;
+        padding: 0.8rem 1.6rem !important;
+        border: 1px solid #334155 !important;
+        box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.3) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+    }
+
+    .stButton>button:hover {
+        transform: translateY(-2px) !important;
+        border-color: #34D399 !important;
+        box-shadow: 0 12px 25px -4px rgba(16, 185, 129, 0.25) !important;
+    }
+
+    /* Boutons de raccourcis */
+    div[data-testid="column"] .stButton>button {
+        font-size: 0.88rem !important;
+        padding: 0.5rem 0.8rem !important;
+        border-radius: 10px !important;
+    }
+
+    /* Carte de Résultat Fintech */
     .result-card {
         background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%);
         border-radius: 18px;
         padding: 1.8rem;
         color: #FFFFFF;
-        box-shadow: 0 15px 30px -5px rgba(15, 23, 42, 0.25);
-        border: 1px solid #334155;
+        box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.35);
+        border: 1px solid rgba(52, 211, 153, 0.2);
         text-align: center;
         margin-bottom: 1.2rem;
+        position: relative;
     }
 
     .result-badge {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -127,16 +185,17 @@ CSS_STYLES = textwrap.dedent("""
     }
 
     .result-price-mad {
-        font-size: 2.8rem;
+        font-size: 3rem;
         font-weight: 800;
-        color: #10B981;
+        color: #34D399;
         letter-spacing: -0.02em;
         line-height: 1.1;
         margin: 0.3rem 0;
+        text-shadow: 0 2px 14px rgba(52, 211, 153, 0.3);
     }
 
     .result-price-eur {
-        font-size: 1rem;
+        font-size: 0.98rem;
         color: #CBD5E1;
         font-weight: 500;
         margin-bottom: 1.2rem;
@@ -147,62 +206,19 @@ CSS_STYLES = textwrap.dedent("""
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
         padding: 0.8rem 1rem;
         margin: 1rem 0;
     }
 
-    .range-col {
-        flex: 1;
-        text-align: center;
-    }
+    .range-col { flex: 1; text-align: center; }
+    .range-divider { width: 1px; height: 36px; background: rgba(255, 255, 255, 0.15); }
+    .range-label { font-size: 0.7rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; }
+    .range-value { font-size: 1.05rem; font-weight: 700; color: #FFFFFF; margin-top: 0.15rem; }
 
-    .range-divider {
-        width: 1px;
-        height: 36px;
-        background: rgba(255, 255, 255, 0.15);
-    }
-
-    .range-label {
-        font-size: 0.72rem;
-        color: #94A3B8;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-
-    .range-value {
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #FFFFFF;
-        margin-top: 0.15rem;
-    }
-
-    /* Pastille de confiance */
-    .confidence-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.82rem;
-        color: #E2E8F0;
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        padding: 0.35rem 0.8rem;
-        border-radius: 9999px;
-        font-weight: 600;
-        margin-top: 0.4rem;
-    }
-
-    .dot-green {
-        width: 8px;
-        height: 8px;
-        background-color: #10B981;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    /* Badges de synthèse */
+    /* Badges Fiche Synthétique avec micro-interactions */
     .spec-badge {
         display: inline-flex;
         align-items: center;
@@ -214,38 +230,45 @@ CSS_STYLES = textwrap.dedent("""
         font-size: 0.82rem;
         font-weight: 600;
         margin: 0.2rem;
+        transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
     }
 
-    /* Bouton principal */
-    .stButton>button {
-        background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
-        color: #FFFFFF !important;
-        font-size: 1.1rem !important;
-        font-weight: 700 !important;
-        border-radius: 12px !important;
-        padding: 0.85rem 1.8rem !important;
-        border: none !important;
-        box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.4) !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    .spec-badge:hover {
+        transform: translateY(-2px);
+        background-color: #EEF2F6;
+        border-color: #34D399;
     }
 
-    .stButton>button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 12px 25px -4px rgba(79, 70, 229, 0.5) !important;
+    /* Animation Skeleton Loader */
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.45; }
     }
 
-    .footer-text {
-        text-align: center;
-        padding: 2rem 0 1rem 0;
-        color: #94A3B8;
-        font-size: 0.85rem;
+    .skeleton-box {
+        animation: pulse 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        background: #E2E8F0;
+        border-radius: 8px;
+    }
+
+    /* Comparateur Cards */
+    .compare-card {
+        background: #FFFFFF;
+        border: 2px solid #E2E8F0;
+        border-radius: 16px;
+        padding: 1.2rem;
+        transition: border-color 0.2s ease;
+    }
+    .compare-card.winner {
+        border-color: #10B981;
+        box-shadow: 0 6px 20px -4px rgba(16, 185, 129, 0.2);
     }
 </style>
 """)
-st.markdown(CSS_STYLES, unsafe_allow_html=True)
+st.markdown(FINTECH_CSS, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# DONNÉES DE RÉFÉRENCE & CATALOGUE MAROC
+# DONNÉES DE RÉFÉRENCE & CATALOGUE
 # ---------------------------------------------------------
 POPULAR_BRANDS = [
     "Dacia", "Renault", "Volkswagen", "Peugeot", "Hyundai", "Mercedes-Benz",
@@ -254,22 +277,11 @@ POPULAR_BRANDS = [
 ]
 
 FALLBACK_MODELS = {
-    "Dacia": ["Logan", "Sandero", "Duster", "Dokker", "Lodgy", "Stepway", "Spring"],
-    "Renault": ["Clio", "Megane", "Kangoo", "Captur", "Kadjar", "Talisman", "Symbol"],
-    "Volkswagen": ["Golf", "Polo", "Passat", "Tiguan", "Touareg", "Caddy", "Arteon"],
-    "Peugeot": ["208", "308", "2008", "3008", "5008", "206", "207", "Partner"],
-    "Hyundai": ["Tucson", "I10", "I20", "I30", "Accent", "Creta", "Santa Fe"],
-    "Mercedes-Benz": ["Classe C", "Classe E", "Classe A", "Gla", "Glc", "Cla", "Classe S"],
-    "Fiat": ["500", "Punto", "Panda", "Doblo", "Tipo", "Fiorino", "Uno"],
-    "Ford": ["Fiesta", "Focus", "Kuga", "Fusion", "Mondeo", "Ecosport", "Ranger"],
-    "Citroen": ["C3", "C4", "C-Elysee", "Berlingo", "C5", "C3 Aircross", "Ds3"],
-    "Bmw": ["Série 3", "Série 1", "Série 5", "X1", "X3", "X5", "X6", "Série 4"],
-    "Audi": ["A3", "A4", "A1", "A6", "Q3", "Q5", "Q7", "A5"],
-    "Toyota": ["Yaris", "Corolla", "Rav4", "Hilux", "Land Cruiser", "C-Hr"],
-    "Kia": ["Sportage", "Picanto", "Rio", "Ceed", "Sorento", "Niro", "Stonic"],
-    "Nissan": ["Qashqai", "Micra", "Juke", "X-Trail", "Navara", "Note"],
-    "Opel": ["Corsa", "Astra", "Insignia", "Mokka", "Crossland"],
-    "Seat": ["Ibiza", "Leon", "Arona", "Ateca", "Toledo"],
+    "Dacia": ["Logan", "Sandero", "Duster", "Dokker", "Lodgy", "Stepway"],
+    "Renault": ["Clio", "Megane", "Kangoo", "Captur", "Kadjar", "Symbol"],
+    "Volkswagen": ["Golf", "Polo", "Passat", "Tiguan", "Touareg", "Caddy"],
+    "Peugeot": ["208", "308", "2008", "3008", "5008", "Partner"],
+    "Hyundai": ["Tucson", "I10", "I20", "I30", "Accent", "Creta"]
 }
 
 MOROCCAN_CITIES = [
@@ -280,7 +292,6 @@ MOROCCAN_CITIES = [
 
 @st.cache_data
 def get_catalog():
-    """Charge le catalogue des marques/modèles depuis config/vehicle_catalog.json si existant."""
     catalog_file = PROJECT_ROOT / "config" / "vehicle_catalog.json"
     if catalog_file.exists():
         try:
@@ -291,41 +302,27 @@ def get_catalog():
             return data, ordered + rest + ["Autre..."]
         except Exception:
             pass
-    ordered = [b for b in POPULAR_BRANDS if b in FALLBACK_MODELS]
-    return FALLBACK_MODELS, ordered + ["Autre..."]
+    return FALLBACK_MODELS, [b for b in POPULAR_BRANDS if b in FALLBACK_MODELS] + ["Autre..."]
 
 catalog_dict, brand_options = get_catalog()
 
 # ---------------------------------------------------------
-# CHARGEMENT DU MODÈLE (RÉEL AVEC FALLBACK FACTICE MOCK)
+# CHARGEMENT DU MODÈLE (RÉEL + FALLBACK MOCK)
 # ---------------------------------------------------------
 @st.cache_resource
 def load_ml_model():
-    """Charge le modèle LightGBM réel ou retourne un mock prédictif cohérent."""
     try:
         from src.models.predict import CarPricePredictor
-        predictor = CarPricePredictor()
-        return predictor, False
-    except Exception as exc:
+        return CarPricePredictor(), False
+    except Exception:
         class MockPredictor:
             def predict(self, data: dict) -> float:
                 year = data.get("year", 2018)
                 km = data.get("kilometrage", 100000)
                 brand = str(data.get("marke", "")).lower()
-                power = float(data.get("puissance", 6))
-                
-                base_price = 160000.0
-                if "dacia" in brand:
-                    base_price = 100000.0
-                elif "mercedes" in brand or "bmw" in brand or "audi" in brand:
-                    base_price = 240000.0
-                
+                base = 112000.0 if "dacia" in brand else 158000.0
                 age = max(1, CURRENT_YEAR - year)
-                depreciation = age * 6500.0 + (km / 10000.0) * 1800.0
-                power_bonus = (power - 6) * 4500.0
-                pred = max(25000.0, base_price - depreciation + power_bonus)
-                return float(pred)
-        
+                return max(25000.0, base - (age * 5500.0) - (km / 10000.0) * 1600.0)
         return MockPredictor(), True
 
 model_predictor, is_mock_mode = load_ml_model()
@@ -334,47 +331,30 @@ model_predictor, is_mock_mode = load_ml_model()
 # VALIDATION DES ENTRÉES & RÈGLES MÉTIER
 # ---------------------------------------------------------
 def valider_inputs(payload: dict) -> tuple[bool, list[str]]:
-    """Vérifie la cohérence métier des entrées et génère des alertes/warnings."""
     warnings = []
     year = payload.get("year", CURRENT_YEAR)
     km = payload.get("kilometrage", 0)
     power = payload.get("puissance", 6)
     age = max(1, CURRENT_YEAR - year)
 
-    # 1. Cohérence Année
     if year > CURRENT_YEAR:
         return False, ["L'année de fabrication ne peut pas être dans le futur."]
     if year < 1990:
-        return False, ["Le modèle est entraîné sur les véhicules fabriqués après 1990."]
+        return False, ["Le modèle prend en charge les véhicules construits après 1990."]
 
-    # 2. Cohérence Roulage
-    km_per_year = km / age
-    if age <= 2 and km > 180000:
-        warnings.append("⚠️ Kilométrage très élevé pour un véhicule récent (usage intensif / taxi suspecté).")
+    if age <= 2 and km > 160000:
+        warnings.append("⚠️ Kilométrage exceptionnellement élevé pour un véhicule récent (usage intensif / taxi).")
     if age >= 10 and km < 25000:
         warnings.append("⚠️ Kilométrage anormalement faible pour un véhicule de plus de 10 ans (compteur à vérifier).")
-
-    # 3. Puissance fiscale
     if power > 25:
-        warnings.append("ℹ️ Puissance fiscale élevée (>25 CV) : impact taxe annuelle importante au Maroc.")
+        warnings.append("ℹ️ Puissance fiscale importante (>25 CV) : taxe annuelle élevée au Maroc.")
 
     return True, warnings
 
 # ---------------------------------------------------------
-# FONCTION DE RENDU DU RÉSULTAT (BUG HTML RÉSOLU)
+# RENDU DU RÉSULTAT CORRIGÉ & TOOLTIP
 # ---------------------------------------------------------
-def afficher_resultat(
-    valeur_mad: float,
-    fourchette_basse: float,
-    fourchette_haute: float,
-    confiance: str = "Élevé (84% R²)"
-):
-    """
-    Rend la carte résultat au format HTML sans bug d'indentation markdown.
-    Utilise textwrap.dedent pour garantir qu'aucun espace initial (>4)
-    ne déclenche un bloc de code brut Markdown.
-    """
-    # Nettoyage et sécurité des valeurs numériques
+def afficher_resultat(valeur_mad, fourchette_basse, fourchette_haute, confiance="Élevé (84% R²)"):
     valeur_mad = max(10000.0, float(valeur_mad))
     fourchette_basse = max(8000.0, float(fourchette_basse))
     fourchette_haute = max(valeur_mad, float(fourchette_haute))
@@ -397,303 +377,278 @@ def afficher_resultat(
                 <div class="range-value">{fourchette_haute:,.0f} MAD</div>
             </div>
         </div>
-
-        <div class="confidence-tag">
-            <span class="dot-green"></span>
-            <span>Indice de confiance algorithmique : <strong>{confiance}</strong></span>
-        </div>
     </div>
     """)
     st.markdown(html_content, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# EN-TÊTE HERO & PRESETS RAPIDES
+# HERO BANNER
 # ---------------------------------------------------------
 st.markdown("""
 <div class="hero-container">
-    <div class="hero-badge">IA & Algorithmes de Régression 2026</div>
+    <div class="hero-badge">⚡ Argus Automobile & IA Maroc 2026</div>
     <h1 class="hero-title">Estimez la valeur réelle de votre <span>Voiture d'Occasion</span></h1>
-    <p class="hero-subtitle">Algorithme LightGBM entraîné sur +29 000 annonces réelles du marché automobile au Maroc (Avito).</p>
+    <p class="hero-subtitle">Algorithme LightGBM entraîné sur +29 000 transactions réelles au Maroc (Avito).</p>
 </div>
 """, unsafe_allow_html=True)
 
 if is_mock_mode:
-    st.info("ℹ️ Mode Démonstration actif (modèle prédictif simulé). Pour connecter le modèle de production, placez `lightgbm_model.pkl` dans le dossier `models/`.")
+    st.info("ℹ️ Mode Démonstration actif. Le modèle de production se charge depuis `models/lightgbm_model.pkl`.")
 
-# Presets rapides
+# ---------------------------------------------------------
+# NAVIGATION PAR ONGLETS (ESTIMATION SIMPLE VS COMPARATEUR)
+# ---------------------------------------------------------
+tab_estimation, tab_comparateur = st.tabs(["📊 Estimation Simple", "⚖️ Mode Comparateur (2 Véhicules)"])
+
 PRESETS = {
-    "dacia": {
-        "marke": "Dacia", "model": "Logan", "year": 2018, "city": "Casablanca",
-        "kilometrage": 110000, "type_carburant": "Diesel", "type_boit": "Manuelle",
-        "puissance": 6, "premiere_main": "Oui", "Nombre_doors": 5
-    },
-    "golf": {
-        "marke": "Volkswagen", "model": "Golf", "year": 2019, "city": "Rabat",
-        "kilometrage": 85000, "type_carburant": "Diesel", "type_boit": "Automatique",
-        "puissance": 8, "premiere_main": "Oui", "Nombre_doors": 5
-    },
-    "clio": {
-        "marke": "Renault", "model": "Clio", "year": 2017, "city": "Marrakech",
-        "kilometrage": 125000, "type_carburant": "Diesel", "type_boit": "Manuelle",
-        "puissance": 6, "premiere_main": "Non", "Nombre_doors": 5
-    },
-    "peugeot": {
-        "marke": "Peugeot", "model": "208", "year": 2020, "city": "Tanger",
-        "kilometrage": 65000, "type_carburant": "Diesel", "type_boit": "Manuelle",
-        "puissance": 5, "premiere_main": "Oui", "Nombre_doors": 5
-    }
+    "dacia": {"marke": "Dacia", "model": "Logan", "year": 2018, "city": "Casablanca", "kilometrage": 110000, "type_carburant": "Diesel", "type_boit": "Manuelle", "puissance": 6, "premiere_main": "Oui", "Nombre_doors": 5},
+    "golf": {"marke": "Volkswagen", "model": "Golf", "year": 2019, "city": "Rabat", "kilometrage": 85000, "type_carburant": "Diesel", "type_boit": "Automatique", "puissance": 8, "premiere_main": "Oui", "Nombre_doors": 5},
+    "clio": {"marke": "Renault", "model": "Clio", "year": 2017, "city": "Marrakech", "kilometrage": 125000, "type_carburant": "Diesel", "type_boit": "Manuelle", "puissance": 6, "premiere_main": "Non", "Nombre_doors": 5},
+    "peugeot": {"marke": "Peugeot", "model": "208", "year": 2020, "city": "Tanger", "kilometrage": 65000, "type_carburant": "Diesel", "type_boit": "Manuelle", "puissance": 5, "premiere_main": "Oui", "Nombre_doors": 5}
 }
 
-if "form_data" not in st.session_state:
-    st.session_state.form_data = PRESETS["dacia"].copy()
-
-st.markdown("##### ⚡ Raccourcis Profils Types (1-Clic) :")
-p1, p2, p3, p4, p5 = st.columns(5)
-with p1:
-    if st.button("🚙 Dacia Logan (2018)", use_container_width=True):
+# =========================================================
+# TAB 1 : ESTIMATION SIMPLE
+# =========================================================
+with tab_estimation:
+    if "form_data" not in st.session_state:
         st.session_state.form_data = PRESETS["dacia"].copy()
-        st.rerun()
-with p2:
-    if st.button("🏎️ Golf 7 (2019)", use_container_width=True):
-        st.session_state.form_data = PRESETS["golf"].copy()
-        st.rerun()
-with p3:
-    if st.button("🚗 Renault Clio 4", use_container_width=True):
-        st.session_state.form_data = PRESETS["clio"].copy()
-        st.rerun()
-with p4:
-    if st.button("🚘 Peugeot 208 (2020)", use_container_width=True):
-        st.session_state.form_data = PRESETS["peugeot"].copy()
-        st.rerun()
-with p5:
-    if st.button("🔄 Reset", use_container_width=True):
-        st.session_state.form_data = PRESETS["dacia"].copy()
-        st.rerun()
 
-st.write("")
+    st.markdown("##### ⚡ Raccourcis Profils Types :")
+    p1, p2, p3, p4, p5 = st.columns(5)
+    with p1:
+        if st.button("🚙 Dacia Logan", key="p_dacia", use_container_width=True):
+            st.session_state.form_data = PRESETS["dacia"].copy(); st.rerun()
+    with p2:
+        if st.button("🏎️ Golf 7", key="p_golf", use_container_width=True):
+            st.session_state.form_data = PRESETS["golf"].copy(); st.rerun()
+    with p3:
+        if st.button("🚗 Renault Clio", key="p_clio", use_container_width=True):
+            st.session_state.form_data = PRESETS["clio"].copy(); st.rerun()
+    with p4:
+        if st.button("🚘 Peugeot 208", key="p_208", use_container_width=True):
+            st.session_state.form_data = PRESETS["peugeot"].copy(); st.rerun()
+    with p5:
+        if st.button("🔄 Reset", key="p_reset", use_container_width=True):
+            st.session_state.form_data = PRESETS["dacia"].copy(); st.rerun()
 
-# ---------------------------------------------------------
-# CORPS DE L'APPLICATION (COLONNE GAUCHE / COLONNE DROITE)
-# ---------------------------------------------------------
-col_left, col_right = st.columns([1.15, 0.85], gap="large")
+    st.write("")
 
-with col_left:
-    # CARTE 1 : IDENTITÉ & LOCALISATION
-    st.markdown("""
-    <div class="custom-card">
-        <div class="card-header">
-            <span>🏷️</span> Identité & Localisation du Véhicule
-        </div>
-    """, unsafe_allow_html=True)
+    # Layout Responsive 2 Colonnes Desktop -> 1 Colonne Mobile
+    col_form, col_panel = st.columns([1.15, 0.85], gap="large")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        cur_brand = st.session_state.form_data.get("marke", "Dacia")
-        b_idx = brand_options.index(cur_brand) if cur_brand in brand_options else 0
-        selected_brand = st.selectbox("Marque du constructeur", brand_options, index=b_idx)
-        
-        if selected_brand == "Autre...":
-            brand_final = st.text_input("Préciser la marque", value="Autre")
-            models_list = ["Autre..."]
+    with col_form:
+        st.markdown('<div class="custom-card"><div class="card-header">🏷️ Identité & Localisation</div>', unsafe_allow_html=True)
+        c1, c2 = st.columns(2)
+        with c1:
+            cur_brand = st.session_state.form_data.get("marke", "Dacia")
+            b_idx = brand_options.index(cur_brand) if cur_brand in brand_options else 0
+            selected_brand = st.selectbox("Marque", brand_options, index=b_idx, key="s_brand")
+            brand_final = st.text_input("Préciser marque", "Autre", key="t_brand") if selected_brand == "Autre..." else selected_brand
+            models_list = catalog_dict.get(selected_brand, ["Autre..."]) + (["Autre..."] if "Autre..." not in catalog_dict.get(selected_brand, []) else [])
+        with c2:
+            cur_model = st.session_state.form_data.get("model", "")
+            m_idx = models_list.index(cur_model) if cur_model in models_list else 0
+            selected_model = st.selectbox("Modèle commercial", models_list, index=m_idx, key="s_model")
+            model_final = st.text_input("Préciser modèle", "Logan", key="t_model") if selected_model == "Autre..." else selected_model
+
+        c3, c4 = st.columns(2)
+        with c3:
+            years_range = list(range(CURRENT_YEAR, 1989, -1))
+            cur_year = st.session_state.form_data.get("year", 2018)
+            selected_year = st.selectbox("Année mise en circulation", years_range, index=years_range.index(cur_year) if cur_year in years_range else 6, key="s_year")
+        with c4:
+            cur_city = st.session_state.form_data.get("city", "Casablanca")
+            selected_city = st.selectbox("Ville", MOROCCAN_CITIES, index=MOROCCAN_CITIES.index(cur_city) if cur_city in MOROCCAN_CITIES else 0, key="s_city")
+            city_final = st.text_input("Préciser ville", "Casablanca", key="t_city") if selected_city == "Autre..." else selected_city
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown('<div class="custom-card"><div class="card-header">⚙️ Motorisation & Kilométrage</div>', unsafe_allow_html=True)
+        f1, f2 = st.columns(2)
+        with f1:
+            fuels = ["Diesel", "Essence", "Hybride", "Electrique"]
+            cur_fuel = st.session_state.form_data.get("type_carburant", "Diesel")
+            selected_fuel = st.selectbox("Carburant", fuels, index=fuels.index(cur_fuel) if cur_fuel in fuels else 0, key="s_fuel")
+        with f2:
+            gearboxes = ["Manuelle", "Automatique"]
+            cur_gear = st.session_state.form_data.get("type_boit", "Manuelle")
+            selected_gear = st.selectbox("Boîte", gearboxes, index=gearboxes.index(cur_gear) if cur_gear in gearboxes else 0, key="s_gear")
+
+        f3, f4, f5 = st.columns(3)
+        with f3:
+            selected_power = st.number_input("Puissance (CV)", 3, 35, int(st.session_state.form_data.get("puissance", 6)), key="n_power")
+        with f4:
+            door_choices = [5, 4, 3]
+            selected_doors = st.selectbox("Portes", door_choices, index=door_choices.index(int(st.session_state.form_data.get("Nombre_doors", 5))), key="s_doors")
+        with f5:
+            first_hand_choices = ["Oui", "Non"]
+            selected_first = st.selectbox("Première main", first_hand_choices, index=first_hand_choices.index(st.session_state.form_data.get("premiere_main", "Oui")), key="s_first")
+
+        cur_km_val = int(st.session_state.form_data.get("kilometrage", 110000))
+        selected_km = st.slider("Kilométrage total (km)", 0, 350000, min(max(cur_km_val, 0), 350000), 5000, format="%d km", key="sl_km")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        submit_trigger = st.button("✨ Calculer l'Estimation Immédiate", key="btn_calc", use_container_width=True)
+
+    with col_panel:
+        age_vehicule = max(1, CURRENT_YEAR - selected_year)
+        km_annuel = int(selected_km / age_vehicule)
+
+        payload = {
+            "year": int(selected_year),
+            "marke": brand_final,
+            "model": model_final,
+            "type_boit": selected_gear,
+            "type_carburant": selected_fuel,
+            "puissance": float(selected_power),
+            "kilometrage": float(selected_km),
+            "premiere_main": selected_first,
+            "Nombre_doors": float(selected_doors),
+            "city": city_final
+        }
+
+        is_valid, validation_warnings = valider_inputs(payload)
+        if not is_valid:
+            for err in validation_warnings: st.error(err)
+            prix_estime = 0.0
         else:
-            brand_final = selected_brand
-            models_list = catalog_dict.get(selected_brand, ["Autre..."])
-            if "Autre..." not in models_list:
-                models_list = models_list + ["Autre..."]
+            for warn in validation_warnings: st.warning(warn)
+            
+            # Skeleton loader & spinner pendant l'inférence
+            with st.spinner("Analyse du marché et prédiction LightGBM..."):
+                try:
+                    prix_estime = model_predictor.predict(payload)
+                except Exception as e:
+                    st.error(f"Erreur d'inférence : {e}")
+                    prix_estime = 100000.0
 
-    with c2:
-        cur_model = st.session_state.form_data.get("model", "")
-        m_idx = models_list.index(cur_model) if cur_model in models_list else 0
-        selected_model = st.selectbox("Modèle commercial", models_list, index=m_idx)
+        prix_plancher = round(prix_estime * 0.93, -2)
+        prix_plafond = round(prix_estime * 1.07, -2)
+
+        # Carte résultat
+        afficher_resultat(prix_estime, prix_plancher, prix_plafond, "Élevé (84% R²)")
+
+        # Tooltip explicatif Indice R² & Confiance
+        with st.popover("ℹ️ Comprendre l'Indice de Confiance et le R² (84%)"):
+            st.markdown("""
+            **Pourquoi un R² de 84% ?**
+            - **R² (Coefficient de détermination)** : Indique que **84% des variations de prix** observées sur le marché marocain sont fidèlement expliquées par les caractéristiques du véhicule (marque, modèle, âge, carburant, kilométrage).
+            - **Fiabilité Élevée** : Le modèle s'appuie sur une base de **29 342 annonces réelles** d'Avito.ma, assurant une robustesse face aux variations régionales.
+            """)
+
+        # Fiche synthétique
+        st.markdown('<div class="custom-card"><div class="card-header">📋 Fiche Synthétique du Véhicule</div>', unsafe_allow_html=True)
+        chips_html = textwrap.dedent(f"""
+            <div style="margin-bottom: 0.8rem;">
+                <span class="spec-badge">🚘 {brand_final} {model_final}</span>
+                <span class="spec-badge">📅 Année {selected_year} ({age_vehicule} ans)</span>
+                <span class="spec-badge">📍 {city_final}</span>
+                <span class="spec-badge">⛽ {selected_fuel}</span>
+                <span class="spec-badge">🕹️ {selected_gear}</span>
+                <span class="spec-badge">⚡ {selected_power} CV</span>
+                <span class="spec-badge">🛣️ {selected_km:,.0f} km</span>
+                <span class="spec-badge">⭐ {'1ère main' if selected_first == 'Oui' else '2ème main +'}</span>
+            </div>
+        """)
+        st.markdown(chips_html, unsafe_allow_html=True)
+
+        km_tag = "Faible roulage (Atout revente)" if km_annuel < 12000 else ("Standard marocain" if km_annuel <= 20000 else "Roulage intensif")
+        km_color = "#10B981" if km_annuel < 12000 else ("#3B82F6" if km_annuel <= 20000 else "#F59E0B")
+
+        usage_html = textwrap.dedent(f"""
+            <div style="padding: 0.85rem; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0; margin-top: 0.6rem;">
+                <div style="font-size: 0.72rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Intensité d'utilisation annuelle</div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: {km_color}; margin: 0.2rem 0;">{km_annuel:,.0f} km / an • {km_tag}</div>
+                <div style="font-size: 0.78rem; color: #94A3B8;">Moyenne calculée sur {selected_km:,.0f} km en {age_vehicule} an(s).</div>
+            </div>
+        </div>
+        """)
+        st.markdown(usage_html, unsafe_allow_html=True)
+
+        # 5. Bouton "Copier le résultat" (avec st.code natif pour 1-clic direct)
+        st.markdown("##### 📋 Exporter ou Copier le Résultat :")
+        rapport_export = f"""[AutoCote Maroc 2026]
+Véhicule : {brand_final} {model_final} ({selected_year})
+Kilométrage : {selected_km:,.0f} km ({km_annuel:,.0f} km/an)
+Carburant / Boîte : {selected_fuel} | {selected_gear} | {selected_power} CV
+Ville : {city_final}
+----------------------------------------
+VALEUR ESTIMÉE : {prix_estime:,.0f} MAD (≈ {round(prix_estime/TAUX_EUR_MAD):,.0f} €)
+Fourchette marché : {prix_plancher:,.0f} - {prix_plafond:,.0f} MAD
+Indice de confiance : 84% (Modèle LightGBM)"""
         
-        if selected_model == "Autre...":
-            model_final = st.text_input("Préciser le modèle", value="Modèle")
-        else:
-            model_final = selected_model
+        st.code(rapport_export, language="markdown")
 
-    c3, c4 = st.columns(2)
-    with c3:
-        years_range = list(range(CURRENT_YEAR, 1989, -1))
-        cur_year = st.session_state.form_data.get("year", 2018)
-        y_idx = years_range.index(cur_year) if cur_year in years_range else 6
-        selected_year = st.selectbox("Année de mise en circulation", years_range, index=y_idx)
+# =========================================================
+# TAB 2 : MODE COMPARATEUR (2 VÉHICULES CÔTE À CÔTE)
+# =========================================================
+with tab_comparateur:
+    st.markdown("#### ⚖️ Comparaison Immédiate de 2 Véhicules d'Occasion")
+    st.caption("Analysez l'écart de cote, de kilométrage et de décote entre deux options d'achat ou de vente.")
 
-    with c4:
-        cur_city = st.session_state.form_data.get("city", "Casablanca")
-        ct_idx = MOROCCAN_CITIES.index(cur_city) if cur_city in MOROCCAN_CITIES else 0
-        selected_city = st.selectbox("Ville d'immatriculation", MOROCCAN_CITIES, index=ct_idx)
-        city_final = st.text_input("Préciser la ville", value="Casablanca") if selected_city == "Autre..." else selected_city
+    col_v1, col_v2 = st.columns(2, gap="large")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Véhicule A
+    with col_v1:
+        st.markdown('<div class="compare-card"><h4>🚗 Véhicule A</h4>', unsafe_allow_html=True)
+        v1_brand = st.selectbox("Marque A", brand_options, index=brand_options.index("Dacia") if "Dacia" in brand_options else 0, key="v1_b")
+        v1_models = catalog_dict.get(v1_brand, ["Autre..."])
+        v1_model = st.selectbox("Modèle A", v1_models, index=0, key="v1_m")
+        v1_year = st.selectbox("Année A", list(range(CURRENT_YEAR, 1994, -1)), index=6, key="v1_y")
+        v1_km = st.slider("Kilométrage A (km)", 0, 300000, 110000, 5000, key="v1_km")
+        v1_fuel = st.selectbox("Carburant A", ["Diesel", "Essence", "Hybride"], index=0, key="v1_f")
+        v1_gear = st.selectbox("Boîte A", ["Manuelle", "Automatique"], index=0, key="v1_g")
+        v1_power = st.number_input("CV A", 3, 25, 6, key="v1_p")
+        v1_city = st.selectbox("Ville A", MOROCCAN_CITIES, index=0, key="v1_c")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    # CARTE 2 : MOTORISATION & KILOMÉTRAGE
-    st.markdown("""
-    <div class="custom-card">
-        <div class="card-header">
-            <span>⚙️</span> Motorisation, Boîte & Kilométrage
-        </div>
-    """, unsafe_allow_html=True)
+    # Véhicule B
+    with col_v2:
+        st.markdown('<div class="compare-card"><h4>🚙 Véhicule B</h4>', unsafe_allow_html=True)
+        v2_brand = st.selectbox("Marque B", brand_options, index=brand_options.index("Renault") if "Renault" in brand_options else 1, key="v2_b")
+        v2_models = catalog_dict.get(v2_brand, ["Autre..."])
+        v2_model = st.selectbox("Modèle B", v2_models, index=0, key="v2_m")
+        v2_year = st.selectbox("Année B", list(range(CURRENT_YEAR, 1994, -1)), index=7, key="v2_y")
+        v2_km = st.slider("Kilométrage B (km)", 0, 300000, 125000, 5000, key="v2_km")
+        v2_fuel = st.selectbox("Carburant B", ["Diesel", "Essence", "Hybride"], index=0, key="v2_f")
+        v2_gear = st.selectbox("Boîte B", ["Manuelle", "Automatique"], index=0, key="v2_g")
+        v2_power = st.number_input("CV B", 3, 25, 6, key="v2_p")
+        v2_city = st.selectbox("Ville B", MOROCCAN_CITIES, index=1, key="v2_c")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    f1, f2 = st.columns(2)
-    with f1:
-        fuels = ["Diesel", "Essence", "Hybride", "Electrique"]
-        cur_fuel = st.session_state.form_data.get("type_carburant", "Diesel")
-        selected_fuel = st.selectbox("Type de carburant", fuels, index=fuels.index(cur_fuel) if cur_fuel in fuels else 0)
+    # Calculs de comparaison
+    p1_data = {"year": int(v1_year), "marke": v1_brand, "model": v1_model, "type_boit": v1_gear, "type_carburant": v1_fuel, "puissance": float(v1_power), "kilometrage": float(v1_km), "premiere_main": "Oui", "Nombre_doors": 5.0, "city": v1_city}
+    p2_data = {"year": int(v2_year), "marke": v2_brand, "model": v2_model, "type_boit": v2_gear, "type_carburant": v2_fuel, "puissance": float(v2_power), "kilometrage": float(v2_km), "premiere_main": "Oui", "Nombre_doors": 5.0, "city": v2_city}
 
-    with f2:
-        gearboxes = ["Manuelle", "Automatique"]
-        cur_gear = st.session_state.form_data.get("type_boit", "Manuelle")
-        selected_gear = st.selectbox("Boîte de vitesses", gearboxes, index=gearboxes.index(cur_gear) if cur_gear in gearboxes else 0)
+    pred_a = model_predictor.predict(p1_data)
+    pred_b = model_predictor.predict(p2_data)
+    delta_price = pred_b - pred_a
+    pct_diff = (delta_price / pred_a) * 100 if pred_a > 0 else 0
 
-    f3, f4, f5 = st.columns(3)
-    with f3:
-        selected_power = st.number_input(
-            "Puissance fiscale (CV)",
-            min_value=3, max_value=35,
-            value=int(st.session_state.form_data.get("puissance", 6)),
-            step=1
-        )
-    with f4:
-        door_choices = [5, 4, 3]
-        cur_doors = int(st.session_state.form_data.get("Nombre_doors", 5))
-        selected_doors = st.selectbox("Nombre de portes", door_choices, index=door_choices.index(cur_doors) if cur_doors in door_choices else 0)
-    with f5:
-        first_hand_choices = ["Oui", "Non"]
-        cur_first = st.session_state.form_data.get("premiere_main", "Oui")
-        selected_first = st.selectbox("Première main", first_hand_choices, index=first_hand_choices.index(cur_first) if cur_first in first_hand_choices else 0)
+    st.write("")
+    st.markdown("### 📊 Résultats du Match Comparatif")
 
-    # Curseur Kilométrage
-    cur_km_val = int(st.session_state.form_data.get("kilometrage", 110000))
-    selected_km = st.slider(
-        "Kilométrage total parcouru",
-        min_value=0, max_value=350000,
-        value=min(max(cur_km_val, 0), 350000),
-        step=5000,
-        format="%d km"
-    )
+    r_col1, r_col2, r_col3 = st.columns(3)
+    r_col1.metric(f"Prix {v1_brand} {v1_model}", f"{pred_a:,.0f} MAD", delta=f"{v1_year}")
+    r_col2.metric(f"Prix {v2_brand} {v2_model}", f"{pred_b:,.0f} MAD", delta=f"{delta_price:+,.0f} MAD ({pct_diff:+.1f}%)", delta_color="inverse")
+    
+    economique = f"{v1_brand} {v1_model}" if pred_a < pred_b else f"{v2_brand} {v2_model}"
+    r_col3.metric("Option la plus accessible", economique, delta=f"Économie : {abs(delta_price):,.0f} MAD")
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    # Bouton de calcul
-    submit_trigger = st.button("✨ Calculer l'Estimation Immédiate", use_container_width=True)
+    # Tableau comparatif
+    st.dataframe([
+        {"Critère": "Cote Estimée (MAD)", "Véhicule A": f"{pred_a:,.0f} MAD", "Véhicule B": f"{pred_b:,.0f} MAD", "Écart": f"{abs(delta_price):,.0f} MAD"},
+        {"Critère": "Âge", "Véhicule A": f"{CURRENT_YEAR - v1_year} ans", "Véhicule B": f"{CURRENT_YEAR - v2_year} ans", "Écart": f"{abs(v1_year - v2_year)} an(s)"},
+        {"Critère": "Kilométrage Annuel", "Véhicule A": f"{int(v1_km/max(1, CURRENT_YEAR - v1_year)):,.0f} km/an", "Véhicule B": f"{int(v2_km/max(1, CURRENT_YEAR - v2_year)):,.0f} km/an", "Écart": f"{abs(int(v1_km/max(1, CURRENT_YEAR - v1_year)) - int(v2_km/max(1, CURRENT_YEAR - v2_year))):,.0f} km"},
+        {"Critère": "Carburant & Boîte", "Véhicule A": f"{v1_fuel} ({v1_gear})", "Véhicule B": f"{v2_fuel} ({v2_gear})", "Écart": "Identique" if v1_fuel == v2_fuel and v1_gear == v2_gear else "Différent"}
+    ], use_container_width=True)
 
 # ---------------------------------------------------------
-# COLONNE DROITE : CALCUL & PANNEAU RÉSULTAT
-# ---------------------------------------------------------
-with col_right:
-    age_vehicule = max(1, CURRENT_YEAR - selected_year)
-    km_annuel = int(selected_km / age_vehicule)
-
-    payload_vehicule = {
-        "year": int(selected_year),
-        "marke": brand_final,
-        "model": model_final,
-        "type_boit": selected_gear,
-        "type_carburant": selected_fuel,
-        "puissance": float(selected_power),
-        "kilometrage": float(selected_km),
-        "premiere_main": selected_first,
-        "Nombre_doors": float(selected_doors),
-        "city": city_final
-    }
-
-    # Validation des entrées
-    is_valid, validation_warnings = valider_inputs(payload_vehicule)
-
-    if not is_valid:
-        for err in validation_warnings:
-            st.error(err)
-        prix_estime = 0.0
-    else:
-        for warn in validation_warnings:
-            st.warning(warn)
-
-        # Calcul de l'estimation avec spinner
-        with st.spinner("Analyse statistique et estimation en cours..."):
-            try:
-                prix_estime = model_predictor.predict(payload_vehicule)
-            except Exception as e:
-                st.error(f"Erreur d'inférence : {e}")
-                prix_estime = 100000.0
-
-    # Bornes et fourchette de négociation
-    prix_plancher = round(prix_estime * 0.93, -2)
-    prix_plafond = round(prix_estime * 1.07, -2)
-
-    # Rendu du bloc résultat corrigé (SANS BUG HTML)
-    afficher_resultat(
-        valeur_mad=prix_estime,
-        fourchette_basse=prix_plancher,
-        fourchette_haute=prix_plafond,
-        confiance="Élevé (84% R²)"
-    )
-
-    # FICHE SYNTHÉTIQUE DU VÉHICULE
-    st.markdown("""
-    <div class="custom-card">
-        <div class="card-header">
-            <span>📋</span> Fiche Synthétique du Véhicule
-        </div>
-    """, unsafe_allow_html=True)
-
-    chips_html = textwrap.dedent(f"""
-        <div style="margin-bottom: 0.8rem;">
-            <span class="spec-badge">🚘 {brand_final} {model_final}</span>
-            <span class="spec-badge">📅 Année {selected_year} ({age_vehicule} ans)</span>
-            <span class="spec-badge">📍 {city_final}</span>
-            <span class="spec-badge">⛽ {selected_fuel}</span>
-            <span class="spec-badge">🕹️ {selected_gear}</span>
-            <span class="spec-badge">⚡ {selected_power} CV</span>
-            <span class="spec-badge">🛣️ {selected_km:,.0f} km</span>
-            <span class="spec-badge">⭐ {'1ère main' if selected_first == 'Oui' else '2ème main +'}</span>
-        </div>
-    """)
-    st.markdown(chips_html, unsafe_allow_html=True)
-
-    # Section : Intensité d'utilisation annuelle
-    if km_annuel < 12000:
-        km_tag = "Faible roulage (Atout à la revente)"
-        km_color = "#10B981"
-    elif km_annuel <= 20000:
-        km_tag = "Roulage standard marocain"
-        km_color = "#3B82F6"
-    else:
-        km_tag = "Roulage intensif (Décote mécanique)"
-        km_color = "#F59E0B"
-
-    usage_html = textwrap.dedent(f"""
-        <div style="padding: 0.85rem; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0; margin-top: 0.6rem;">
-            <div style="font-size: 0.75rem; color: #64748B; font-weight: 700; text-transform: uppercase;">
-                Intensité d'utilisation annuelle
-            </div>
-            <div style="font-size: 1.05rem; font-weight: 700; color: {km_color}; margin: 0.2rem 0;">
-                {km_annuel:,.0f} km / an • {km_tag}
-            </div>
-            <div style="font-size: 0.78rem; color: #94A3B8;">
-                Moyenne calculée sur {selected_km:,.0f} km parcourus en {age_vehicule} an(s).
-            </div>
-        </div>
-    </div>
-    """)
-    st.markdown(usage_html, unsafe_allow_html=True)
-
-    # Bouton de synthèse / copie texte
-    rapport_texte = f"""Rapport AutoCote Maroc :
-- Véhicule : {brand_final} {model_final} ({selected_year})
-- Kilométrage : {selected_km:,.0f} km ({km_annuel:,.0f} km/an)
-- Motorisation : {selected_fuel} | {selected_gear} | {selected_power} CV
-- Estimation Marché : {prix_estime:,.0f} MAD (Fourchette : {prix_plancher:,.0f} - {prix_plafond:,.0f} MAD)
-Généré par AutoCote Maroc (Modèle LightGBM)."""
-
-    with st.expander("📄 Exporter ou Copier le Résumé de l'Estimation"):
-        st.text_area("Texte du rapport", value=rapport_texte, height=120)
-
-# ---------------------------------------------------------
-# PIED DE PAGE & CRÉDITS
+# FOOTER
 # ---------------------------------------------------------
 st.markdown("""
-<div class="footer-text">
+<div style="text-align: center; padding: 2rem 0 1rem 0; color: #94A3B8; font-size: 0.85rem;">
     🚗 <strong>AutoCote Maroc</strong> • Développé par <strong>Achraf Mentagui</strong><br>
-    Modèle de Machine Learning entraîné sur les données publiques d'Avito.ma • Conforme MLOps
+    Modèle de Machine Learning entraîné sur les données d'Avito.ma • Conforme MLOps
 </div>
 """, unsafe_allow_html=True)
