@@ -34,16 +34,26 @@ class CarFeaturesInput(BaseModel):
     city: str = Field(..., description="Ville de localisation")
 
 
+def load_model(model_path: Path | str | None = None) -> Any:
+    """Charge l'artéfact du modèle depuis le disque ou lève FileNotFoundError."""
+    path = PROJECT_ROOT / (model_path or config.model.artifact_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Model file not found at: {path}")
+    logger.info(f"Loading model from {path}")
+    return joblib.load(path)
+
+
 class CarPricePredictor:
     """Production predictor wrapper for car price regression."""
 
-    def __init__(self, model_path: Path | str | None = None):
-        self.path = PROJECT_ROOT / (model_path or config.model.artifact_path)
-        if not self.path.exists():
-            raise FileNotFoundError(f"Model file not found at: {self.path}")
-        logger.info(f"Loading model from {self.path}")
-        self.model = joblib.load(self.path)
+    def __init__(self, model_path: Path | str | None = None, model: Any = None):
         self.cleaner = CleanInputTransformer()
+        if model is not None:
+            self.model = model
+            self.path = Path(model_path) if model_path else Path("in-memory-model")
+        else:
+            self.path = PROJECT_ROOT / (model_path or config.model.artifact_path)
+            self.model = load_model(self.path)
 
     def predict(self, raw_input: dict[str, Any]) -> float:
         """Validate input, clean features, and output predicted price in MAD."""
@@ -60,3 +70,9 @@ class CarPricePredictor:
         pred = self.model.predict(df_processed)[0]
         # Prices cannot be negative
         return max(0.0, float(pred))
+
+
+def predict_price(raw_input: dict[str, Any], model: Any = None) -> float:
+    """Fonction helper pour prédire le prix d'un véhicule à partir d'un dictionnaire."""
+    predictor = CarPricePredictor(model=model) if model is not None else CarPricePredictor()
+    return predictor.predict(raw_input)

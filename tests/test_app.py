@@ -1,9 +1,14 @@
+from pathlib import Path
+
 from streamlit.testing.v1 import AppTest
+
+# Résolution absolue du chemin pour garantir la compatibilité en CI
+APP_PATH = str(Path(__file__).resolve().parent.parent / "app" / "streamlit_app.py")
 
 
 def test_app_startup_and_rendering():
     """Vérifie que l'application démarre sans lever d'exception."""
-    at = AppTest.from_file("app/streamlit_app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run(timeout=30)
     assert not at.exception, f"Erreur au démarrage de l'app : {at.exception}"
     assert len(at.title) >= 0 or len(at.markdown) > 0
@@ -11,7 +16,7 @@ def test_app_startup_and_rendering():
 
 def test_preset_button_click():
     """Vérifie que le clic sur un preset (Golf 7) met à jour les champs sans crash."""
-    at = AppTest.from_file("app/streamlit_app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run(timeout=30)
 
     # Trouver et cliquer sur le bouton Golf 7
@@ -28,7 +33,7 @@ def test_preset_button_click():
 
 def test_app_submit_prediction():
     """Vérifie que le clic sur 'Calculer' génère une estimation sans crash."""
-    at = AppTest.from_file("app/streamlit_app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run(timeout=30)
 
     # Trouver le bouton de calcul
