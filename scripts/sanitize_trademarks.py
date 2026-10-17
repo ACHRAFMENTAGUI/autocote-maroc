@@ -4,13 +4,13 @@ Nettoie et remplace récursivement toutes les occurrences de marques déposées
 dans le code source, les notebooks, les configurations et la documentation.
 """
 
-from datetime import datetime
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import sys
+from datetime import datetime
+from pathlib import Path
 
 # Support encodage console Windows
 if hasattr(sys.stdout, "reconfigure"):
@@ -22,12 +22,10 @@ REPLACEMENTS = {
     r"https?://(?:www\.)?portail-auto-maroc\.local/[^\s\"')]+": "https://portail-auto-maroc.local/annonces",
     r"https?://(?:www\.)?portail-auto-maroc\.local": "https://portail-auto-maroc.local",
     r"www\.portail-auto-maroc\.local": "portail-auto-maroc.local",
-
     # Fichiers et artefacts
     r"MarketData\.csv": "market_data_raw.csv",
     r"market_data\.csv": "market_data.csv",
     r"market_backup\.json": "market_backup.json",
-
     # Formulations textuelles
     r"données publiques du marché automobile marocain": "données publiques du marché automobile marocain",
     r"annonces du marché automobile marocain": "annonces du marché automobile marocain",
@@ -40,9 +38,7 @@ FILE_RENAMES = {
     "market_backup.json": "market_backup.json",
 }
 
-EXTENSIONS_A_TRAITER = {
-    ".py", ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".html", ".css", ".ipynb"
-}
+EXTENSIONS_A_TRAITER = {".py", ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".html", ".css", ".ipynb"}
 
 IGNORED_DIRS = {".git", ".venv", "venv", "__pycache__", ".pytest_cache", ".backup_sanitization"}
 
@@ -76,7 +72,7 @@ def nettoyer_texte(contenu: str) -> tuple[str, int]:
 def nettoyer_notebook(chemin_nb: Path, vider_outputs: bool = True) -> int:
     """Nettoie un notebook Jupyter (.ipynb) de manière sécurisée en parsant son JSON."""
     try:
-        with open(chemin_nb, "r", encoding="utf-8") as f:
+        with open(chemin_nb, encoding="utf-8") as f:
             data = json.load(f)
     except (OSError, json.JSONDecodeError) as e:
         print(f"⚠️ Erreur lors de la lecture du notebook {chemin_nb}: {e}")
@@ -113,7 +109,7 @@ def nettoyer_notebook(chemin_nb: Path, vider_outputs: bool = True) -> int:
 def renommer_fichiers(root_dir: Path):
     """Renomme les fichiers contenant des marques déposées."""
     renommes = []
-    for root, dirs, files in os.walk(root_dir):
+    for root, _dirs, files in os.walk(root_dir):
         if any(ignored in root for ignored in IGNORED_DIRS):
             continue
         for file in files:
@@ -153,7 +149,7 @@ def executer_sanitisation(root_dir: Path, vider_outputs_notebooks: bool = True):
                     total_global += cnt
             else:
                 try:
-                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                    with open(file_path, encoding="utf-8", errors="ignore") as f:
                         contenu = f.read()
 
                     nouveau_contenu, cnt = nettoyer_texte(contenu)
@@ -187,4 +183,3 @@ def executer_sanitisation(root_dir: Path, vider_outputs_notebooks: bool = True):
 if __name__ == "__main__":
     racine_projet = Path(__file__).resolve().parent.parent
     executer_sanitisation(racine_projet, vider_outputs_notebooks=True)
-

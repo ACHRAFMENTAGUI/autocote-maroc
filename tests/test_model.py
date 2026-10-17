@@ -24,9 +24,7 @@ def test_model_loading_and_prediction(sample_car_input):
     pred_price = predictor.predict(sample_car_input)
 
     assert isinstance(pred_price, float)
-    assert pred_price > 10000.0, (
-        "La prédiction pour un véhicule roulant doit être positive et réaliste"
-    )
+    assert pred_price > 10000.0, "La prédiction pour un véhicule roulant doit être positive et réaliste"
     assert pred_price < 2000000.0, "La prédiction ne doit pas être démesurément haute"
 
 

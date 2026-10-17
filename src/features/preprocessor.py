@@ -1,10 +1,13 @@
 import re
+
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
 from src.config import config
+
 
 class CleanInputTransformer(BaseEstimator, TransformerMixin):
     """Transformer for cleaning and standardizing user/scraped input data."""
@@ -49,22 +52,18 @@ class CleanInputTransformer(BaseEstimator, TransformerMixin):
 
         return df
 
+
 def build_feature_pipeline() -> ColumnTransformer:
     """Build Scikit-learn ColumnTransformer for scaling numeric and encoding categorical features."""
-    num_pipeline = Pipeline([
-        ("scaler", StandardScaler())
-    ])
+    num_pipeline = Pipeline([("scaler", StandardScaler())])
 
-    cat_pipeline = Pipeline([
-        ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
-    ])
+    cat_pipeline = Pipeline([("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False))])
 
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", num_pipeline, config.features.numeric),
             ("cat", cat_pipeline, config.features.categorical),
         ],
-        remainder="drop"
+        remainder="drop",
     )
     return preprocessor
-
