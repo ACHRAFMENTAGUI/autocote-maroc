@@ -342,9 +342,61 @@ Ce projet est distribué sous licence open-source **MIT**. Vous êtes libre de l
 
 ## 👥 Auteurs & Contact
 
-- **Achraf Mentagui** — *Data Science & Machine Learning Engineering*
-- **Rihab El Marikh** — *Data Engineering & Modélisation Statistique*
+- **Achraf Mentagui** — 
 
 Pour toute question, collaboration de recherche ou retour d'expérience :
 - Ouvrez une [Issue GitHub](https://github.com/username/autocote-maroc/issues).
 - Rejoignez les discussions sur le repository.
+
+---
+
+## 🗺️ Feuille de Route (Roadmap)
+
+- [x] Structuration modulaire et packaging `src/`.
+- [x] Pipeline de feature engineering reproductible Scikit-learn.
+- [x] Interface Streamlit avec menus déroulants dynamiques et mode comparateur.
+- [x] Suite de tests automatisés (Backend & AppTest Streamlit).
+- [ ] **API REST FastAPI** : Exposition d'un microservice de prédiction avec documentation OpenAPI/Swagger.
+- [ ] **Explicabilité Locale (SHAP Values)** : Visualisation interactive des facteurs ayant influencé le prix d'un véhicule donné (forme de cascade d'impact).
+- [ ] **Surveillance de Dérive de Données (Evidently AI)** : Alertes de data drift sur les variations de prix du marché.
+- [ ] **Export PDF officiel** : Génération d'une fiche d'expertise téléchargeable aux formats PDF.
+
+---
+
+## 🤝 Guide de Contribution
+
+Les contributions sont les bienvenues ! Pour proposer une amélioration :
+
+1. Forkez le dépôt.
+2. Créez votre branche thématique :
+   ```bash
+   git checkout -b feature/amelioration-preprocesseur
+   ```
+3. Respectez les conventions **Conventional Commits** (`feat:`, `fix:`, `docs:`, `test:`).
+4. Assurez-vous que le linter et les tests passent au vert :
+   ```bash
+   ruff check .
+   pytest tests/
+   ```
+5. Ouvrez une Pull Request détaillée. Consultez [`CONTRIBUTING.md`](CONTRIBUTING.md) pour les détails.
+
+---
+
+## ⚖️ Licence & Mentions Légales
+
+### Licence
+Ce projet est distribué sous licence open-source **MIT**. Vous êtes libre de l'utiliser, l'étudier, le modifier et le redistribuer. Consultez le fichier [`LICENSE`](LICENSE) pour plus d'informations.
+
+### Clause de Non-Affiliation & Données Publiques
+> **AutoCote Maroc** est une initiative logicielle et académique indépendante développée à des fins d'analyse statistique et de démonstration technique. Ce projet n'est **affilié, sponsorisé, associé, ni approuvé par aucune plateforme commerciale tierce d'annonces classées**. Les estimations fournies sont générées par des modèles d'apprentissage statistique et ne constituent pas une expertise légale d'assurance.
+
+---
+
+## 👥 Auteurs & Contact
+
+- **Achraf Mentagui** —
+
+Pour toute question, collaboration de recherche ou retour d'expérience :
+- Ouvrez une [Issue GitHub](https://github.com/username/autocote-maroc/issues).
+- Rejoignez les discussions sur le repository.
+
