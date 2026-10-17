@@ -33,10 +33,45 @@ dev = [
 ]
 
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py310"
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "notebooks",
+    "*.ipynb",
+    "data",
+    ".backup*",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort (import sorting)
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "BLE", # flake8-blind-except
+    "S",   # flake8-bandit
+    "RUF", # Ruff-specific rules
+]
+ignore = [
+    "S101",   # Use of assert detected (needed in tests/ML sanity assertions)
+    "E501",   # Line length handled gracefully for UI HTML templates & markdown
+    "RUF001", # Ambiguous characters (emojis and French accents in UI/CLI)
+    "RUF002", # Ambiguous docstring characters
+    "RUF003", # Ambiguous comment characters
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "BLE001"]
+"app/*" = ["S110", "BLE001"]
+"scripts/*" = ["S101", "BLE001"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
 

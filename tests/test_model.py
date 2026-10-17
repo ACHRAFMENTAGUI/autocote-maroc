@@ -1,5 +1,7 @@
 import pytest
+
 from src.models.predict import CarPricePredictor
+
 
 @pytest.fixture
 def sample_car_input():
@@ -13,16 +15,20 @@ def sample_car_input():
         "kilometrage": "100000",
         "premiere_main": "Non",
         "Nombre_doors": "5",
-        "city": "Casablanca"
+        "city": "Casablanca",
     }
+
 
 def test_model_loading_and_prediction(sample_car_input):
     predictor = CarPricePredictor()
     pred_price = predictor.predict(sample_car_input)
 
     assert isinstance(pred_price, float)
-    assert pred_price > 10000.0, "La prédiction pour un véhicule roulant doit être positive et réaliste"
+    assert pred_price > 10000.0, (
+        "La prédiction pour un véhicule roulant doit être positive et réaliste"
+    )
     assert pred_price < 2000000.0, "La prédiction ne doit pas être démesurément haute"
+
 
 def test_unseen_categories_handling(sample_car_input):
     """Test resilience against unseen categories (OHE handle_unknown='ignore')."""
@@ -33,4 +39,3 @@ def test_unseen_categories_handling(sample_car_input):
 
     assert isinstance(pred_price, float)
     assert pred_price > 0.0
-

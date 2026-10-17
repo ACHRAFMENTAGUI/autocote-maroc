@@ -1,5 +1,4 @@
 import re
-from datetime import datetime
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
@@ -34,7 +33,6 @@ class CleanInputTransformer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         df = X.copy()
-        current_year = datetime.now().year
 
         if "kilometrage" in df.columns:
             df["kilometrage"] = df["kilometrage"].apply(self._parse_kilometrage)

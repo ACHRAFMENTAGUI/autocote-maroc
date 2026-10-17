@@ -1,14 +1,17 @@
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
+
 import joblib
 import pandas as pd
-from pydantic import BaseModel, Field
 import sklearn.compose._column_transformer
+from pydantic import BaseModel, Field
 
 # Backward-compatibility patch for pickles serialized with scikit-learn <= 1.6
 if not hasattr(sklearn.compose._column_transformer, "_RemainderColsList"):
+
     class _RemainderColsList(list):
         pass
+
     sklearn.compose._column_transformer._RemainderColsList = _RemainderColsList
 
 from src.config import PROJECT_ROOT, config
@@ -16,6 +19,7 @@ from src.features.preprocessor import CleanInputTransformer
 from src.utils.logger import get_logger
 
 logger = get_logger("Predictor")
+
 
 class CarFeaturesInput(BaseModel):
     year: int = Field(..., ge=1970, le=2030, description="Année de mise en circulation")
@@ -29,10 +33,11 @@ class CarFeaturesInput(BaseModel):
     Nombre_doors: str | float | int = Field(..., description="Nombre de portes")
     city: str = Field(..., description="Ville de localisation")
 
+
 class CarPricePredictor:
     """Production predictor wrapper for car price regression."""
 
-    def __init__(self, model_path: Path | str = None):
+    def __init__(self, model_path: Path | str | None = None):
         self.path = PROJECT_ROOT / (model_path or config.model.artifact_path)
         if not self.path.exists():
             raise FileNotFoundError(f"Model file not found at: {self.path}")
@@ -40,7 +45,7 @@ class CarPricePredictor:
         self.model = joblib.load(self.path)
         self.cleaner = CleanInputTransformer()
 
-    def predict(self, raw_input: Dict[str, Any]) -> float:
+    def predict(self, raw_input: dict[str, Any]) -> float:
         """Validate input, clean features, and output predicted price in MAD."""
         validated = CarFeaturesInput(**raw_input)
         df_raw = pd.DataFrame([validated.model_dump()])
@@ -55,4 +60,3 @@ class CarPricePredictor:
         pred = self.model.predict(df_processed)[0]
         # Prices cannot be negative
         return max(0.0, float(pred))
-

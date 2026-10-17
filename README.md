@@ -229,7 +229,7 @@ donnees_vehicule = {
     "kilometrage": 110000,
     "premiere_main": "Oui",
     "Nombre_doors": 5,
-    "city": "Casablanca"
+    "city": "Casablanca",
 }
 
 # Calcul de l'estimation vénale
