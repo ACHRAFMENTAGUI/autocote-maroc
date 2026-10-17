@@ -86,7 +86,7 @@ Sur le marché automobile marocain de la seconde main, l'absence de cote officie
 Le projet adopte les standards d'organisation **Cookiecutter Data Science** pour garantir la reproductibilité et la modularité :
 
 ```text
-PFM/
+autocote/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml               # Pipeline d'intégration continue (Lint + Tests)
@@ -394,7 +394,7 @@ Ce projet est distribué sous licence open-source **MIT**. Vous êtes libre de l
 
 ## 👥 Auteurs & Contact
 
-- **Achraf Mentagui** —
+- **Achraf Mentagui** 
 
 Pour toute question, collaboration de recherche ou retour d'expérience :
 - Ouvrez une [Issue GitHub](https://github.com/username/autocote-maroc/issues).

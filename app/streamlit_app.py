@@ -4,6 +4,7 @@ import sys
 import textwrap
 from datetime import datetime
 from pathlib import Path
+
 import streamlit as st
 
 # 1. Résolution dynamique du projet root pour imports 'src'

@@ -6,10 +6,18 @@ on:
   pull_request:
     branches: [ main ]
 
+# ✅ Annule les runs précédents sur la même branche
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.10", "3.11"]
 
@@ -28,12 +36,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -e .
+          # ✅ Installation explicite des outils de dev
+          pip install ruff pytest pytest-cov
 
       - name: Lint with Ruff
         run: |
-          ruff check .
+          ruff check . --output-format=github
 
-      - name: Run unit tests
+      - name: Check formatting with Ruff
         run: |
-          pytest tests/test_preprocessor.py -v
+          ruff format --check .
 
+      - name: Run all unit tests
+        run: |
+          pytest tests/ -v --cov=src --cov=app --cov-report=term-missing
+
+      - name: Upload coverage report
+        if: matrix.python-version == '3.10'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: .coverage
+          retention-days: 7
