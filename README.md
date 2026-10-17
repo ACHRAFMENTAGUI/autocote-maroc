@@ -162,7 +162,7 @@ autocote/
 
 ```bash
 # 1. Cloner le dépôt
-git clone https://github.com/username/autocote-maroc.git
+git clone https://github.com/ACHRAFMENTAGUI/autocote-maroc.git
 cd autocote-maroc
 
 # 2. Créer l'environnement virtuel isolé
